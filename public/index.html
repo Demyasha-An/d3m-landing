@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru" class="theme-dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0710" />
+    <title>d3mvpn — анонимный VPN</title>
+    <meta
+      name="description"
+      content="d3mvpn — минималистичный VPN-сервис: стабильное соединение, высокая скорость, полная анонимность и доступные тарифы от 80₽/мес."
+    />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="dns-prefetch" href="https://unpkg.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <!-- Import map + early fetch of three.js so the WebGL background paints sooner -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+      }
+    </script>
+    <link
+      rel="modulepreload"
+      href="https://unpkg.com/three@0.160.0/build/three.module.js"
+      crossorigin
+    />
+  </head>
+  <body>
+    <div class="page">
+      <!-- Header -->
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="d3mvpn">
+          <img class="brand__logo" src="/logo.svg" alt="" width="34" height="34" />
+          <span class="brand__name">d3mvpn</span>
+        </a>
+
+        <div class="header__actions">
+          <div class="lang-switch" role="group" aria-label="Language">
+            <button type="button" class="lang-btn is-active" data-lang="ru">RU</button>
+            <button type="button" class="lang-btn" data-lang="en">EN</button>
+          </div>
+          <a class="btn btn--ghost header__cabinet" data-link="dashboard" data-i18n="nav.cabinet" href="#">
+            Кабинет / Регистрация
+          </a>
+        </div>
+      </header>
+
+      <main id="top" class="split">
+        <!-- Hero -->
+        <section class="hero">
+          <span class="pill" data-nodes-status data-i18n="hero.badge.loading">Проверка статуса...</span>
+          <h1 class="hero__title">
+            <span data-i18n="hero.title">Быстрый и приватный VPN</span>
+            <span class="hero__title-accent" data-i18n="hero.titleAccent">для каждого дня.</span>
+          </h1>
+          <p class="hero__subtitle" data-i18n="hero.subtitle">
+            d3mvpn — стабильное соединение, высокая скорость и защита вашей приватности.
+          </p>
+          <div class="hero__cta">
+            <a class="btn btn--primary" data-link="telegram" href="#" data-i18n="hero.telegram">
+              Начать в Telegram
+            </a>
+            <a class="btn btn--outline" data-link="dashboard" href="#" data-i18n="hero.cabinet">
+              Личный кабинет / Регистрация
+            </a>
+          </div>
+          <p class="hero__note">
+            <span data-i18n="hero.priceLabel">Тарифы от</span>
+            <span class="accent" data-price></span>
+            <span class="dot" aria-hidden="true">•</span>
+            <span data-i18n="hero.note">Пробный период — без карты и обязательств.</span>
+          </p>
+        </section>
+
+        <!-- Features -->
+        <section id="features" class="features">
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.4 8 11 4.6-2.6 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h3 data-i18n="feat.privacy.title">Полная анонимность</h3>
+            <p data-i18n="feat.privacy.text">Не собираем и не храним логи. Ваша активность остаётся только вашей.</p>
+          </article>
+
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
+            </div>
+            <h3 data-i18n="feat.speed.title">Высокая скорость</h3>
+            <p data-i18n="feat.speed.text">Оптимизированные серверы для стриминга, игр и работы без задержек.</p>
+          </article>
+
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>
+            </div>
+            <h3 data-i18n="feat.stable.title">Стабильное соединение</h3>
+            <p data-i18n="feat.stable.text">Надёжный аптайм и автопереключение, чтобы вы всегда оставались онлайн.</p>
+          </article>
+
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+            <h3 data-i18n="feat.trial.title">Пробный период</h3>
+            <p data-i18n="feat.trial.text">Протестируйте сервис до оплаты и убедитесь в качестве соединения.</p>
+          </article>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="brand">
+          <img class="brand__logo" src="/logo.svg" alt="" width="26" height="26" />
+          <span class="brand__name">d3mvpn</span>
+        </div>
+        <p class="site-footer__copy">© <span data-year></span> d3mvpn. <span data-i18n="footer.rights">Все права защищены.</span></p>
+      </footer>
+    </div>
+
+    <script src="/config.js" defer></script>
+    <script src="/script.js" defer></script>
+    <script type="module" src="/bg.js"></script>
+  </body>
+</html>
