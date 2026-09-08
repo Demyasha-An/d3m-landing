@@ -13,22 +13,3 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-    depends_on:
-      - xray-checker
-
-  xray-checker:
-    image: kutovoys/xray-checker:latest
-    container_name: d3mvpn-xray-checker
-    restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      - SUBSCRIPTION_URL=${XRAY_CHECKER_SUB_URL}
-      - SUBSCRIPTION_JSON_FORMAT=true
-      - PROXY_CHECK_METHOD=ip
-      - PROXY_CHECK_INTERVAL=${XRAY_CHECKER_INTERVAL:-120}
-      - PROXY_TIMEOUT=30
-      - METRICS_PORT=2112
-      - METRICS_PROTECTED=true
-      - WEB_PUBLIC=true
-      - WEB_PUBLIC_SHOW_PROTOCOL=false
