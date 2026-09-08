@@ -1,7 +1,7 @@
 services:
   d3mvpn:
     build: .
-    image: reiwa-d3mshop-landing-cq:latest
+    image: ghcr.io/demyasha-an/d3m-landing:latest
     container_name: d3mvpn-landing
     restart: unless-stopped
     env_file:
