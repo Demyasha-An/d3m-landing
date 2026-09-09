@@ -321,9 +321,19 @@
             t("hero.badge.recommended") + ": "
           ));
           if (recommended.countryCode) {
+            var cc = String(recommended.countryCode).toLowerCase();
             var flag = document.createElement("span");
-            flag.className = "pill__flag";
-            flag.textContent = String(recommended.countryCode).toUpperCase();
+            flag.className = "pill__flag pill__flag--img";
+            var img = document.createElement("img");
+            img.className = "pill__flag-img";
+            img.src = "https://flagcdn.com/w80/" + encodeURIComponent(cc) + ".png";
+            img.alt = String(recommended.countryCode).toUpperCase();
+            img.loading = "lazy";
+            img.onerror = function () {
+              flag.textContent = String(recommended.countryCode).toUpperCase();
+              flag.classList.remove("pill__flag--img");
+            };
+            flag.appendChild(img);
             badge.appendChild(flag);
             badge.appendChild(document.createTextNode(" "));
           }
