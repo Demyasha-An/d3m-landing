@@ -408,6 +408,8 @@ body::after {
   background: var(--bg-elev);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .legal__doc h1 {
   font-family: var(--font-head);
