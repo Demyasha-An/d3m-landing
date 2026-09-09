@@ -56,12 +56,6 @@ curl -s http://127.0.0.1:3000/healthz   # {"status":"ok"}
 cd /opt/d3m-landing && docker compose pull && docker compose up -d
 ```
 
-Пин версии вместо `:latest` — в `.env`:
-
-```dotenv
-IMAGE=ghcr.io/demyasha-an/d3m-landing@sha256:<digest>
-```
-
 ## Переменные окружения (`.env`)
 
 | Переменная | Обязат. | Дефолт | Где взять / что значит |
@@ -76,7 +70,6 @@ IMAGE=ghcr.io/demyasha-an/d3m-landing@sha256:<digest>
 | `REMNAWAVE_API_TOKEN` | − | — | Панель → Settings → API Tokens → Create. **Только сервер**, в браузер не попадает |
 | `PROMO_WORD_CODE` / `PROMO_WORD_TEXT` | − | — | Пасхалка №1 (напечатать `promo`). Пустой код выключает |
 | `PROMO_LOGO_CODE` / `PROMO_LOGO_TEXT` | − | — | Пасхалка №2 (тройной клик по лого) |
-| `IMAGE` | − | `:latest` | Только для компоуза: какой тег/дайджест тянуть |
 
 > ⚠️ Промокоды отдаются в браузер через `/config.js` — это механика показа,
 > а не секрет. Считай их публичными.

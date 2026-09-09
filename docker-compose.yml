@@ -1,7 +1,7 @@
 services:
   d3mvpn:
     build: .
-    image: ${IMAGE:-ghcr.io/demyasha-an/d3m-landing:latest}
+    image: ghcr.io/demyasha-an/d3m-landing:latest
     container_name: d3mvpn-landing
     restart: unless-stopped
     env_file:
