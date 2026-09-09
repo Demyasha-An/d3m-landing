@@ -1,0 +1,14 @@
+# Offline build: base image is loaded via `crane pull` + `docker load`
+# (the daemon has no direct registry access in this environment).
+# node_modules/ and dist/ are built on the host beforehand:
+#   npm.cmd install
+#   npm.cmd run build
+FROM node:20-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package.json package-lock.json ./
+COPY node_modules ./node_modules
+COPY dist ./dist
+COPY public ./public
+EXPOSE 3000
+CMD ["node", "dist/server.js"]

@@ -1,0 +1,5 @@
+.git
+.env
+base-node.tar
+d3m-landing.tar
+npm-debug.log
