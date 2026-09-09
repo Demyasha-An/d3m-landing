@@ -273,6 +273,19 @@
         var links = Array.prototype.slice.call(document.querySelectorAll("[data-doc-link]"));
         var sections = Array.prototype.slice.call(document.querySelectorAll("[data-doc]"));
         var ids = links.map(function (a) { return a.getAttribute("data-doc-link"); });
+        function closeDrop(drop) {
+          if (!drop || !drop.hasAttribute("open")) return;
+          var list = drop.querySelector(".docs__drop-list");
+          if (!list) {
+            drop.removeAttribute("open");
+            return;
+          }
+          list.classList.add("is-closing");
+          setTimeout(function () {
+            drop.removeAttribute("open");
+            list.classList.remove("is-closing");
+          }, 180);
+        }
         function activate(id, push) {
           if (ids.indexOf(id) === -1) return;
           links.forEach(function (a) {
@@ -281,8 +294,7 @@
             if (on) {
               var label = document.querySelector("[data-drop-label]");
               if (label) label.textContent = a.textContent;
-              var drop = a.closest("details");
-              if (drop) drop.removeAttribute("open");
+              closeDrop(a.closest("details"));
             }
           });
           if (push !== false) {
@@ -301,6 +313,17 @@
           );
           sections.forEach(function (s) { spy.observe(s); });
         }
+        // Animated close when tapping the summary while open.
+        document.querySelectorAll(".docs__drop").forEach(function (d) {
+          var summary = d.querySelector("summary");
+          if (!summary) return;
+          summary.addEventListener("click", function (e) {
+            if (d.hasAttribute("open")) {
+              e.preventDefault();
+              closeDrop(d);
+            }
+          });
+        });
         // Deep link: /docs#doc-rules scrolls to the section on load.
         var initial = (location.hash || "").replace(/^#doc-/, "").replace(/^#/, "");
         var target = document.getElementById("doc-" + initial) || document.getElementById("doc-" + ids[0]);
