@@ -10,10 +10,7 @@ interface PromoEgg {
 }
 
 interface LegalLinks {
-  offerUrl: string;
-  privacyUrl: string;
-  rulesUrl: string;
-  consentUrl: string;
+  docsUrl: string;
 }
 
 interface RuntimeConfig {
@@ -73,10 +70,7 @@ const config: RuntimeConfig = {
     text: process.env.PROMO_LOGO_TEXT ?? "",
   },
   legal: {
-    offerUrl: (process.env.LEGAL_OFFER_URL ?? "").trim(),
-    privacyUrl: (process.env.LEGAL_PRIVACY_URL ?? "").trim(),
-    rulesUrl: (process.env.LEGAL_RULES_URL ?? "").trim(),
-    consentUrl: (process.env.LEGAL_CONSENT_URL ?? "").trim(),
+    docsUrl: (process.env.LEGAL_DOCS_URL ?? "").trim(),
   },
 };
 

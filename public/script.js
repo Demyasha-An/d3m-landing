@@ -40,10 +40,7 @@
       "feat.trial.text":
         "Протестируйте сервис до оплаты и убедитесь в качестве соединения.",
       "footer.rights": "Все права защищены.",
-      "footer.offer": "Оферта",
-      "footer.privacy": "Политика конфиденциальности",
-      "footer.rules": "Правила сервиса",
-      "footer.consent": "Согласие на обработку ПД",
+      "footer.docs": "Документы",
       priceFormat: "{value}{currency}/мес",
       "promo.title": "Секретный промокод найден!",
       "promo.copy": "Скопировать",
@@ -77,10 +74,7 @@
       "feat.trial.text":
         "Test the service before you pay and see the quality for yourself.",
       "footer.rights": "All rights reserved.",
-      "footer.offer": "Terms of Service",
-      "footer.privacy": "Privacy Policy",
-      "footer.rules": "Service Rules",
-      "footer.consent": "Data Processing Consent",
+      "footer.docs": "Documents",
       priceFormat: "{value}{currency}/mo",
       "promo.title": "Secret promo code unlocked!",
       "promo.copy": "Copy",
@@ -160,28 +154,17 @@
   } catch (e) {}
   applyLang(saved);
 
-  /* ── Legal links from .env config ─── */
+  /* ── Legal link from .env config ──── */
   function renderLegal() {
     var lang = document.documentElement.lang || "ru";
     var dict = i18n[lang] || i18n.ru;
-    var items = [
-      // Empty URL in .env → built-in hardcoded page.
-      ["footer.offer", cfg.legal.offerUrl || "/offer.html"],
-      ["footer.privacy", cfg.legal.privacyUrl || "/privacy.html"],
-      ["footer.rules", cfg.legal.rulesUrl || "/rules.html"],
-      ["footer.consent", cfg.legal.consentUrl || "/consent.html"],
-    ];
+    var url = cfg.legal.docsUrl || "/docs.html";
     document.querySelectorAll("[data-legal]").forEach(function (nav) {
       nav.textContent = "";
-      items.forEach(function (item) {
-        if (!item[1]) return;
-        var a = document.createElement("a");
-        a.href = item[1];
-        a.target = "_blank";
-        a.rel = "noopener";
-        a.textContent = dict[item[0]] || item[0];
-        nav.appendChild(a);
-      });
+      var a = document.createElement("a");
+      a.href = url;
+      a.textContent = dict["footer.docs"] || "footer.docs";
+      nav.appendChild(a);
     });
   }
 
