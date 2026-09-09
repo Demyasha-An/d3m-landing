@@ -468,7 +468,7 @@ body::after {
 }
 .docs__side {
   position: sticky;
-  top: 20px;
+  top: 96px;
 }
 .docs__nav {
   display: flex;
@@ -526,7 +526,7 @@ body::after {
   }
   .docs__side {
     position: sticky;
-    top: 0;
+    top: 84px;
     z-index: 5;
     order: -1;
   }
