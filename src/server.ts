@@ -125,6 +125,7 @@ async function fetchFromRemnawave(): Promise<NodesStatus | null> {
     });
     const hosts = rawHosts
       .map((host) => ({
+        remark: typeof host["remark"] === "string" ? host["remark"] : "",
         address: typeof host["address"] === "string" ? host["address"] : "",
         viewPosition: typeof host["viewPosition"] === "number" ? host["viewPosition"] : 0,
         hidden: host["isDisabled"] === true || host["isHidden"] === true,
@@ -147,11 +148,13 @@ async function fetchFromRemnawave(): Promise<NodesStatus | null> {
     const least = parsed
       .filter((n) => n.status)
       .sort((a, b) => a.usersOnline - b.usersOnline)[0] ?? null;
-    // Free host = first visible host attached to that node; fallback: node name.
-    const host =
-      (least && hosts.find((h) => least.uuid !== "" && h.nodes.includes(least.uuid))?.address) ||
-      least?.name ||
-      null;
+    // Free host = display name (remark) of the first visible host attached to
+    // that node; fallbacks: host address, then node name.
+    const matchedHost =
+      least && least.uuid !== ""
+        ? hosts.find((h) => h.nodes.includes(least.uuid))
+        : undefined;
+    const host = matchedHost?.remark || matchedHost?.address || least?.name || null;
     const recommendedNode =
       host && least ? { host, usersOnline: least.usersOnline } : null;
     return { allActive, totalNodes, activeNodes, recommendedNode, source: "remnawave", nodes };
