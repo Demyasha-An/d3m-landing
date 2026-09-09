@@ -34,7 +34,7 @@ interface NodesStatus {
   allActive: boolean;
   totalNodes: number;
   activeNodes: number;
-  fastestNode: null;
+  recommendedNode: { name: string; usersOnline: number } | null;
   source: "remnawave" | "none";
   nodes: PublicNode[];
 }
@@ -116,9 +116,15 @@ async function fetchFromRemnawave(): Promise<NodesStatus | null> {
       };
     });
     const totalNodes = nodes.length;
-    const activeNodes = nodes.filter((n) => n.status).length;
+    const active = nodes.filter((n) => n.status);
+    const activeNodes = active.length;
     const allActive = totalNodes > 0 && activeNodes === totalNodes;
-    return { allActive, totalNodes, activeNodes, fastestNode: null, source: "remnawave", nodes };
+    // Least-loaded active node (fewest users online) — no latency probing.
+    const least = active.length > 0
+      ? active.reduce((best, cur) => (cur.usersOnline < best.usersOnline ? cur : best))
+      : null;
+    const recommendedNode = least ? { name: least.name, usersOnline: least.usersOnline } : null;
+    return { allActive, totalNodes, activeNodes, recommendedNode, source: "remnawave", nodes };
   } catch (error) {
     console.error("[d3mvpn] Remnawave fetch failed:", error);
     return null;
@@ -129,7 +135,7 @@ const emptyStatus: NodesStatus = {
   allActive: false,
   totalNodes: 0,
   activeNodes: 0,
-  fastestNode: null,
+  recommendedNode: null,
   source: "none",
   nodes: [],
 };

@@ -15,7 +15,7 @@
     ru: {
       "nav.cabinet": "Кабинет / Регистрация",
       "hero.badge.allActive": "Серверы работают",
-      "hero.badge.fastest": "Самый быстрый",
+      "hero.badge.recommended": "Свободнее всего",
       "hero.badge.maintenance": "Ведутся технические работы",
       "hero.badge.loading": "Проверка статуса...",
       "hero.title": "Быстрый и приватный VPN",
@@ -48,7 +48,7 @@
     en: {
       "nav.cabinet": "Sign in / Sign up",
       "hero.badge.allActive": "Servers online",
-      "hero.badge.fastest": "Fastest",
+      "hero.badge.recommended": "Least loaded",
       "hero.badge.maintenance": "Maintenance in progress",
       "hero.badge.loading": "Checking status...",
       "hero.title": "Fast, private VPN",
@@ -297,7 +297,7 @@
 
     function updateBadge(data) {
       var allActive = data.allActive;
-      var fastest = data.fastestNode;
+      var recommended = data.recommendedNode;
 
       var dot = badge.querySelector(".pill__dot");
       if (!dot) {
@@ -312,15 +312,15 @@
         badge.textContent = "";
         badge.appendChild(dot);
 
-        if (fastest && fastest.latencyMs > 0) {
-          // "Серверы онлайн — Самый быстрый: Amsterdam • 42ms"
+        if (recommended && recommended.name) {
+          // "Серверы работают — Свободнее всего: Amsterdam"
           badge.appendChild(document.createTextNode(
             t("hero.badge.allActive") + " — " +
-            t("hero.badge.fastest") + ": " +
-            fastest.name + " • " + fastest.latencyMs + "ms"
+            t("hero.badge.recommended") + ": " +
+            recommended.name
           ));
         } else {
-          // No latency data (fallback to Remnawave) — simple text
+          // No recommendation data — simple text
           badge.appendChild(document.createTextNode(t("hero.badge.allActive")));
         }
       } else {
@@ -341,7 +341,7 @@
         })
         .catch(function () {
           // On error, show maintenance mode
-          updateBadge({ allActive: false, fastestNode: null });
+          updateBadge({ allActive: false, recommendedNode: null });
         });
     }
 
