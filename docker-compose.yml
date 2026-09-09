@@ -13,3 +13,11 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+    networks:
+      - remnawave-network
+
+# Shared with the reverse proxy (rezeis-nginx) — must exist:
+# docker network create remnawave-network
+networks:
+  remnawave-network:
+    external: true

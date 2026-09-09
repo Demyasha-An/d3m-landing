@@ -23,8 +23,9 @@
 ## Быстрый старт на сервере (готовый образ из GHCR)
 
 ```bash
-# 1. Каталог установки
+# 1. Каталог установки и общая сеть с реверс-прокси
 mkdir -p /opt/d3m-landing && cd /opt/d3m-landing
+docker network create remnawave-network 2>/dev/null || true
 
 # 2. Скачай два файла (нужен доступ к репо). Любой вариант:
 #    а) один файл через gh CLI:
