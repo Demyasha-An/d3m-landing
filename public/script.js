@@ -345,7 +345,13 @@
           var ccUp = recommended.countryCode
             ? String(recommended.countryCode).toUpperCase()
             : "";
-          var words = hostText.split(" ");
+          // Split on any whitespace (incl. non-breaking spaces from panel).
+          var words = hostText.split(/\s+/).filter(function (w) { return w !== ""; });
+          if (ccUp && words.length > 0 && new RegExp("^" + ccUp + "[-_:|]", "i").test(words[0])) {
+            // Glued prefix like "PL-Poland-1", even as a single token.
+            words[0] = words[0].slice(ccUp.length).replace(/^[-_:|]+/, "");
+            if (words[0] === "") words.shift();
+          }
           while (words.length > 1) {
             var head = words[0].replace(/[^A-Za-z]/g, "").toUpperCase();
             if (head !== "" && (head === ccUp || /^(?:-:|:|\|)$/.test(words[0]))) {
