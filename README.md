@@ -26,15 +26,18 @@
 # 1. Каталог установки
 mkdir -p /opt/d3m-landing && cd /opt/d3m-landing
 
-# 2. Скачай два файла со страницы репозитория
-#    (Code → docker-compose.yml и .env.example → Raw → сохранить):
-#    https://github.com/Demyasha-An/d3m-landing/blob/main/docker-compose.yml
-#    https://github.com/Demyasha-An/d3m-landing/blob/main/.env.example
-#    Альтернатива одним шагом (нужен токен с правом repo):
-#    curl -fsSL -H "Authorization: Bearer <TOKEN>" \
-#      -o docker-compose.yml https://raw.githubusercontent.com/Demyasha-An/d3m-landing/main/docker-compose.yml
-#    curl -fsSL -H "Authorization: Bearer <TOKEN>" \
-#      -o .env.example https://raw.githubusercontent.com/Demyasha-An/d3m-landing/main/.env.example
+# 2. Скачай два файла (нужен доступ к репо). Любой вариант:
+#    а) один файл через gh CLI:
+#       gh api repos/Demyasha-An/d3m-landing/contents/docker-compose.yml --jq .content | base64 -d > docker-compose.yml
+#       gh api repos/Demyasha-An/d3m-landing/contents/.env.example --jq .content | base64 -d > .env.example
+#    б) напрямую с raw (токен с правом repo — можно взять из `gh auth token`):
+#       curl -fsSL -H "Authorization: Bearer <TOKEN>" \
+#         -o docker-compose.yml https://raw.githubusercontent.com/Demyasha-An/d3m-landing/main/docker-compose.yml
+#       curl -fsSL -H "Authorization: Bearer <TOKEN>" \
+#         -o .env.example https://raw.githubusercontent.com/Demyasha-An/d3m-landing/main/.env.example
+#    в) руками со страницы репозитория (файл → Raw → сохранить):
+#       https://github.com/Demyasha-An/d3m-landing/blob/main/docker-compose.yml
+#       https://github.com/Demyasha-An/d3m-landing/blob/main/.env.example
 
 # 3. Конфиг из шаблона
 cp .env.example .env
