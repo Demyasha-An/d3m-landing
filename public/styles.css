@@ -228,6 +228,21 @@ body::after {
   background: currentColor;
   animation: pulse 2s ease-in-out infinite;
 }
+.pill__flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--border);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  flex: none;
+}
 @keyframes pulse {
   0%, 100% {
     opacity: 1;

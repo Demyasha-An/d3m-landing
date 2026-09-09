@@ -313,12 +313,21 @@
         badge.appendChild(dot);
 
         if (recommended && recommended.host) {
-          // "Серверы работают — Свободнее всего: nl1.example.com"
+          // Strip a leading flag emoji (regional indicators): Windows has no
+          // flag glyphs and shows letter pairs instead — we render our own chip.
+          var host = String(recommended.host).replace(/^[\u{1F1E6}-\u{1F1FF}]{2}\s*/u, "");
           badge.appendChild(document.createTextNode(
             t("hero.badge.allActive") + " — " +
-            t("hero.badge.recommended") + ": " +
-            recommended.host
+            t("hero.badge.recommended") + ": "
           ));
+          if (recommended.countryCode) {
+            var flag = document.createElement("span");
+            flag.className = "pill__flag";
+            flag.textContent = String(recommended.countryCode).toUpperCase();
+            badge.appendChild(flag);
+            badge.appendChild(document.createTextNode(" "));
+          }
+          badge.appendChild(document.createTextNode(host || recommended.host));
         } else {
           // No recommendation data — simple text
           badge.appendChild(document.createTextNode(t("hero.badge.allActive")));

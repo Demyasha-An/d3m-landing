@@ -34,7 +34,7 @@ interface NodesStatus {
   allActive: boolean;
   totalNodes: number;
   activeNodes: number;
-  recommendedNode: { host: string; usersOnline: number } | null;
+  recommendedNode: { host: string; countryCode: string; usersOnline: number } | null;
   source: "remnawave" | "none";
   nodes: PublicNode[];
 }
@@ -156,7 +156,9 @@ async function fetchFromRemnawave(): Promise<NodesStatus | null> {
         : undefined;
     const host = matchedHost?.remark || matchedHost?.address || least?.name || null;
     const recommendedNode =
-      host && least ? { host, usersOnline: least.usersOnline } : null;
+      host && least
+        ? { host, countryCode: least.countryCode, usersOnline: least.usersOnline }
+        : null;
     return { allActive, totalNodes, activeNodes, recommendedNode, source: "remnawave", nodes };
   } catch (error) {
     console.error("[d3mvpn] Remnawave fetch failed:", error);
