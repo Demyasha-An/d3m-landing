@@ -471,6 +471,7 @@ body::after {
 .docs__side {
   position: sticky;
   top: 96px;
+  min-width: 0;
 }
 .docs__nav {
   display: flex;
