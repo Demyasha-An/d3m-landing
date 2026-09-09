@@ -332,9 +332,29 @@
         badge.appendChild(dot);
 
         if (recommended && recommended.host) {
-          // Strip a leading flag emoji (regional indicators): Windows has no
-          // flag glyphs and shows letter pairs instead — we render our own chip.
-          var host = String(recommended.host).replace(/^[\u{1F1E6}-\u{1F1FF}]{2}\s*/u, "");
+          // Cut flag emoji (regional indicators) out of the panel remark,
+          // keep only the custom text: "🇵🇱 Poland - 1 | Fast" → "Poland - 1 | Fast".
+          // Windows has no flag glyphs and would show letter pairs instead.
+          var RI_RE = new RegExp(
+            String.fromCharCode(55300) + "["
+              + String.fromCharCode(56806) + "-"
+              + String.fromCharCode(56831) + "]",
+            "g",
+          );
+          var hostText = String(recommended.host).replace(RI_RE, " ");
+          var ccUp = recommended.countryCode
+            ? String(recommended.countryCode).toUpperCase()
+            : "";
+          var words = hostText.split(" ");
+          while (words.length > 1) {
+            var head = words[0].replace(/[^A-Za-z]/g, "").toUpperCase();
+            if (head !== "" && (head === ccUp || /^(?:-:|:|\|)$/.test(words[0]))) {
+              words.shift();
+            } else {
+              break;
+            }
+          }
+          var host = words.join(" ").replace(/\s{2,}/g, " ").trim() || hostText.trim();
           badge.appendChild(document.createTextNode(
             t("hero.badge.allActive") + " — " +
             t("hero.badge.recommended") + ": "
