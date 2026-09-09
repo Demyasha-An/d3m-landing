@@ -165,15 +165,16 @@
     var lang = document.documentElement.lang || "ru";
     var dict = i18n[lang] || i18n.ru;
     var items = [
-      ["footer.offer", cfg.legal.offerUrl],
-      ["footer.privacy", cfg.legal.privacyUrl],
-      ["footer.rules", cfg.legal.rulesUrl],
-      ["footer.consent", cfg.legal.consentUrl],
+      // Empty URL in .env → built-in hardcoded page.
+      ["footer.offer", cfg.legal.offerUrl || "/offer.html"],
+      ["footer.privacy", cfg.legal.privacyUrl || "/privacy.html"],
+      ["footer.rules", cfg.legal.rulesUrl || "/rules.html"],
+      ["footer.consent", cfg.legal.consentUrl || "/consent.html"],
     ];
     document.querySelectorAll("[data-legal]").forEach(function (nav) {
       nav.textContent = "";
       items.forEach(function (item) {
-        if (!item[1]) return; // empty URL in .env → link hidden
+        if (!item[1]) return;
         var a = document.createElement("a");
         a.href = item[1];
         a.target = "_blank";
