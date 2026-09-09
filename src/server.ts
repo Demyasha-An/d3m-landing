@@ -23,13 +23,25 @@ interface RuntimeConfig {
   promoLogo: PromoEgg;
 }
 
+interface PublicNode {
+  name: string;
+  countryCode: string;
+  status: boolean;
+  usersOnline: number;
+}
+
 interface NodesStatus {
   allActive: boolean;
   totalNodes: number;
   activeNodes: number;
-  fastestNode: { name: string; latencyMs: number } | null;
+  fastestNode: null;
   source: "remnawave" | "none";
+  nodes: PublicNode[];
 }
+
+// In-memory cache so every page view doesn't hammer the panel.
+const NODES_CACHE_TTL_MS = 30_000;
+let nodesCache: { at: number; data: NodesStatus } | null = null;
 
 /**
  * Runtime configuration, fully driven by environment variables (.env).
@@ -74,40 +86,61 @@ app.get("/healthz", (_req, res) => {
 });
 
 /**
- * Fetch status from Remnawave API.
+ * Fetch node status from the Remnawave panel.
+ * GET {REMNAWAVE_API_URL}/api/nodes with a panel API token (server-side only).
  * Returns null if not configured or fetch fails.
  */
 async function fetchFromRemnawave(): Promise<NodesStatus | null> {
   if (!config.remnawaveApiUrl || !config.remnawaveApiToken) return null;
   try {
-    const nodesUrl = `${config.remnawaveApiUrl}/api/nodes`;
-    const response = await fetch(nodesUrl, {
+    const base = config.remnawaveApiUrl.trim().replace(/\/+$/, "");
+    const response = await fetch(`${base}/api/nodes`, {
       headers: {
         Authorization: `Bearer ${config.remnawaveApiToken}`,
         "Content-Type": "application/json",
       },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(8000),
     });
     if (!response.ok) throw new Error(`Remnawave API returned ${response.status}`);
-    const payload = await response.json();
-    const wrapped = payload as { response?: unknown };
-    const nodes = Array.isArray(wrapped?.response) ? (wrapped.response as any[]) : [];
+    const payload = (await response.json()) as { response?: unknown };
+    const raw = Array.isArray(payload?.response)
+      ? (payload.response as Record<string, unknown>[])
+      : [];
+    const nodes: PublicNode[] = raw.map((node) => {
+      const status = node["isConnected"] === true && node["isDisabled"] !== true;
+      return {
+        name: typeof node["name"] === "string" ? node["name"] : "Unknown",
+        countryCode: typeof node["countryCode"] === "string" ? node["countryCode"] : "",
+        status,
+        usersOnline: typeof node["usersOnline"] === "number" ? node["usersOnline"] : 0,
+      };
+    });
     const totalNodes = nodes.length;
-    const activeNodes = nodes.filter((node) => node.isConnected === true && node.isDisabled !== true).length;
+    const activeNodes = nodes.filter((n) => n.status).length;
     const allActive = totalNodes > 0 && activeNodes === totalNodes;
-    return { allActive, totalNodes, activeNodes, fastestNode: null, source: "remnawave" };
+    return { allActive, totalNodes, activeNodes, fastestNode: null, source: "remnawave", nodes };
   } catch (error) {
     console.error("[d3mvpn] Remnawave fetch failed:", error);
     return null;
   }
 }
 
-app.get("/api/nodes-status", async (_req, res) => {
-  const remnawaveStatus = await fetchFromRemnawave();
-  if (remnawaveStatus) return res.json(remnawaveStatus);
+const emptyStatus: NodesStatus = {
+  allActive: false,
+  totalNodes: 0,
+  activeNodes: 0,
+  fastestNode: null,
+  source: "none",
+  nodes: [],
+};
 
-  // No status source available
-  res.json({ allActive: false, totalNodes: 0, activeNodes: 0, fastestNode: null, source: "none" });
+app.get("/api/nodes-status", async (_req, res) => {
+  if (nodesCache && Date.now() - nodesCache.at < NODES_CACHE_TTL_MS) {
+    return res.json(nodesCache.data);
+  }
+  const status = (await fetchFromRemnawave()) ?? emptyStatus;
+  nodesCache = { at: Date.now(), data: status };
+  res.json(status);
 });
 
 app.use(express.static(path.join(__dirname, "..", "public")));
