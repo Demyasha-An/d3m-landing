@@ -202,10 +202,10 @@ app.get("/docs", (_req, res) => {
 
 // Legacy per-document pages → matching section on /docs.
 const DOC_HASHES: Record<string, string> = {
-  "/offer.html": "offer",
-  "/privacy.html": "privacy",
-  "/rules.html": "rules",
-  "/consent.html": "consent",
+  "/offer.html": "doc-offer",
+  "/privacy.html": "doc-privacy",
+  "/rules.html": "doc-rules",
+  "/consent.html": "doc-consent",
 };
 for (const [page, hash] of Object.entries(DOC_HASHES)) {
   app.get(page, (_req, res) => res.redirect(301, `/docs#${hash}`));
