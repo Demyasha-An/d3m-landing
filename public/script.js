@@ -158,7 +158,7 @@
   function renderLegal() {
     var lang = document.documentElement.lang || "ru";
     var dict = i18n[lang] || i18n.ru;
-    var url = cfg.legal.docsUrl || "/docs.html";
+    var url = cfg.legal.docsUrl || "/docs";
     document.querySelectorAll("[data-legal]").forEach(function (nav) {
       nav.textContent = "";
       var a = document.createElement("a");

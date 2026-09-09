@@ -195,6 +195,22 @@ app.get("/api/nodes-status", async (_req, res) => {
 
 app.use(express.static(path.join(__dirname, "..", "public")));
 
+// Clean URL for the all-in-one legal page.
+app.get("/docs", (_req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "docs.html"));
+});
+
+// Legacy per-document pages → matching section on /docs.
+const DOC_HASHES: Record<string, string> = {
+  "/offer.html": "offer",
+  "/privacy.html": "privacy",
+  "/rules.html": "rules",
+  "/consent.html": "consent",
+};
+for (const [page, hash] of Object.entries(DOC_HASHES)) {
+  app.get(page, (_req, res) => res.redirect(301, `/docs#${hash}`));
+}
+
 app.get("*", (_req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
