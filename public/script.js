@@ -312,12 +312,12 @@
         badge.textContent = "";
         badge.appendChild(dot);
 
-        if (recommended && recommended.name) {
-          // "Серверы работают — Свободнее всего: Amsterdam"
+        if (recommended && recommended.host) {
+          // "Серверы работают — Свободнее всего: nl1.example.com"
           badge.appendChild(document.createTextNode(
             t("hero.badge.allActive") + " — " +
             t("hero.badge.recommended") + ": " +
-            recommended.name
+            recommended.host
           ));
         } else {
           // No recommendation data — simple text

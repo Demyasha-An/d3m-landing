@@ -34,7 +34,7 @@ interface NodesStatus {
   allActive: boolean;
   totalNodes: number;
   activeNodes: number;
-  recommendedNode: { name: string; usersOnline: number } | null;
+  recommendedNode: { host: string; usersOnline: number } | null;
   source: "remnawave" | "none";
   nodes: PublicNode[];
 }
@@ -87,43 +87,73 @@ app.get("/healthz", (_req, res) => {
 
 /**
  * Fetch node status from the Remnawave panel.
- * GET {REMNAWAVE_API_URL}/api/nodes with a panel API token (server-side only).
+ * GET {REMNAWAVE_API_URL}/api/nodes + /api/hosts with a panel API token
+ * (server-side only, token needs `nodes:list` and `hosts:list` scopes).
  * Returns null if not configured or fetch fails.
  */
 async function fetchFromRemnawave(): Promise<NodesStatus | null> {
   if (!config.remnawaveApiUrl || !config.remnawaveApiToken) return null;
   try {
     const base = config.remnawaveApiUrl.trim().replace(/\/+$/, "");
-    const response = await fetch(`${base}/api/nodes`, {
-      headers: {
-        Authorization: `Bearer ${config.remnawaveApiToken}`,
-        "Content-Type": "application/json",
-      },
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!response.ok) throw new Error(`Remnawave API returned ${response.status}`);
-    const payload = (await response.json()) as { response?: unknown };
-    const raw = Array.isArray(payload?.response)
-      ? (payload.response as Record<string, unknown>[])
+    const headers = {
+      Authorization: `Bearer ${config.remnawaveApiToken}`,
+      "Content-Type": "application/json",
+    };
+    const [nodesRes, hostsRes] = await Promise.all([
+      fetch(`${base}/api/nodes`, { headers, signal: AbortSignal.timeout(8000) }),
+      fetch(`${base}/api/hosts`, { headers, signal: AbortSignal.timeout(8000) }),
+    ]);
+    if (!nodesRes.ok) throw new Error(`Remnawave nodes returned ${nodesRes.status}`);
+    if (!hostsRes.ok) throw new Error(`Remnawave hosts returned ${hostsRes.status}`);
+    const nodesPayload = (await nodesRes.json()) as { response?: unknown };
+    const hostsPayload = (await hostsRes.json()) as { response?: unknown };
+    const rawNodes = Array.isArray(nodesPayload?.response)
+      ? (nodesPayload.response as Record<string, unknown>[])
       : [];
-    const nodes: PublicNode[] = raw.map((node) => {
+    const rawHosts = Array.isArray(hostsPayload?.response)
+      ? (hostsPayload.response as Record<string, unknown>[])
+      : [];
+    const parsed = rawNodes.map((node) => {
       const status = node["isConnected"] === true && node["isDisabled"] !== true;
       return {
+        uuid: typeof node["uuid"] === "string" ? node["uuid"] : "",
         name: typeof node["name"] === "string" ? node["name"] : "Unknown",
         countryCode: typeof node["countryCode"] === "string" ? node["countryCode"] : "",
         status,
         usersOnline: typeof node["usersOnline"] === "number" ? node["usersOnline"] : 0,
       };
     });
+    const hosts = rawHosts
+      .map((host) => ({
+        address: typeof host["address"] === "string" ? host["address"] : "",
+        viewPosition: typeof host["viewPosition"] === "number" ? host["viewPosition"] : 0,
+        hidden: host["isDisabled"] === true || host["isHidden"] === true,
+        nodes: Array.isArray(host["nodes"])
+          ? (host["nodes"] as unknown[]).filter((u): u is string => typeof u === "string")
+          : [],
+      }))
+      .filter((host) => host.address !== "" && !host.hidden)
+      .sort((a, b) => a.viewPosition - b.viewPosition);
+    const nodes: PublicNode[] = parsed.map(({ name, countryCode, status, usersOnline }) => ({
+      name,
+      countryCode,
+      status,
+      usersOnline,
+    }));
     const totalNodes = nodes.length;
-    const active = nodes.filter((n) => n.status);
-    const activeNodes = active.length;
+    const activeNodes = parsed.filter((n) => n.status).length;
     const allActive = totalNodes > 0 && activeNodes === totalNodes;
     // Least-loaded active node (fewest users online) — no latency probing.
-    const least = active.length > 0
-      ? active.reduce((best, cur) => (cur.usersOnline < best.usersOnline ? cur : best))
-      : null;
-    const recommendedNode = least ? { name: least.name, usersOnline: least.usersOnline } : null;
+    const least = parsed
+      .filter((n) => n.status)
+      .sort((a, b) => a.usersOnline - b.usersOnline)[0] ?? null;
+    // Free host = first visible host attached to that node; fallback: node name.
+    const host =
+      (least && hosts.find((h) => least.uuid !== "" && h.nodes.includes(least.uuid))?.address) ||
+      least?.name ||
+      null;
+    const recommendedNode =
+      host && least ? { host, usersOnline: least.usersOnline } : null;
     return { allActive, totalNodes, activeNodes, recommendedNode, source: "remnawave", nodes };
   } catch (error) {
     console.error("[d3mvpn] Remnawave fetch failed:", error);

@@ -71,7 +71,7 @@ cd /opt/d3m-landing && docker compose pull && docker compose up -d
 | `TELEGRAM_BOT_URL` | − | `https://t.me/d3mvpn_bot` | Кнопка «Начать в Telegram», уходит в браузер |
 | `MIN_PRICE` / `CURRENCY` | − | `80` / `₽` | «Тарифы от …», уходит в браузер |
 | `REMNAWAVE_API_URL` | − | — | Базовый URL панели **без** `/api`, напр. `https://panel.example.com`. Пусто → статус `source:none`, лендинг работает |
-| `REMNAWAVE_API_TOKEN` | − | — | Панель → Settings → API Tokens → Create, минимальный скоуп **`nodes:list`** (только чтение списка нод). **Только сервер**, в браузер не попадает |
+| `REMNAWAVE_API_TOKEN` | − | — | Панель → Settings → API Tokens → Create, минимальные скоупы **`nodes:list` + `hosts:list`** (только чтение). **Только сервер**, в браузер не попадает |
 | `PROMO_WORD_CODE` / `PROMO_WORD_TEXT` | − | — | Пасхалка №1 (напечатать `promo`). Пустой код выключает |
 | `PROMO_LOGO_CODE` / `PROMO_LOGO_TEXT` | − | — | Пасхалка №2 (тройной клик по лого) |
 
