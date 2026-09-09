@@ -523,6 +523,10 @@ body::after {
 .docs__link.is-active .docs__link-bar {
   background: var(--primary-strong);
 }
+/* Mobile dropdown (desktop: hidden) ──── */
+.docs__drop {
+  display: none;
+}
 @media (max-width: 860px) {
   .docs {
     grid-template-columns: 1fr;
@@ -533,35 +537,85 @@ body::after {
     top: 78px;
     z-index: 5;
     order: -1;
-    margin: 0 calc(-1 * clamp(20px, 4vw, 72px));
   }
   .docs__nav {
-    flex-direction: row;
-    align-items: center;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding: 8px 20px;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    background: rgba(10, 7, 16, 0.92);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  .docs__nav::-webkit-scrollbar {
     display: none;
   }
   .docs__nav-title {
     display: none;
   }
-  .docs__link {
-    white-space: nowrap;
-    font-size: 0.82rem;
-    padding: 8px 12px;
-    border-bottom: 2px solid transparent;
+  .docs__nav {
+    display: none;
   }
-  .docs__link-bar {
+  .docs__side {
+    margin: 0;
+  }
+  .docs__drop {
+    display: block;
+    position: relative;
+  }
+  .docs__drop-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+  .docs__drop-btn::-webkit-details-marker {
+    display: none;
+  }
+  .docs__drop-caret {
+    flex: none;
+    color: var(--primary);
+    transition: transform 0.25s ease;
+  }
+  .docs__drop[open] .docs__drop-caret {
+    transform: rotate(180deg);
+  }
+  .docs__drop-list {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+    border-radius: 12px;
+    background: rgba(24, 16, 36, 0.97);
+    border: 1px solid var(--border);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+    animation: docIn 0.22s ease;
+  }
+  .docs__drop-link {
+    display: block;
+    padding: 11px 14px;
+    border-radius: 9px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .docs__drop-link:hover {
+    color: var(--fg);
+    background: rgba(192, 132, 252, 0.08);
+  }
+  .docs__drop-link.is-active {
+    color: var(--primary);
+    background: var(--primary-soft);
+    font-weight: 600;
+  }
+  .docs__drop-link .docs__link-bar {
     display: none;
   }
   .docs__content .legal__doc {

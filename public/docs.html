@@ -26,6 +26,18 @@
       </header>
       <main class="legal docs">
         <aside class="docs__side">
+          <details class="docs__drop">
+            <summary class="docs__drop-btn">
+              <span data-drop-label>Публичная оферта</span>
+              <svg class="docs__drop-caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <nav class="docs__drop-list" aria-label="Документы">
+          <a class="docs__drop-link is-active" href="#doc-offer" data-doc-link="offer"><span class="docs__link-bar" aria-hidden="true"></span>Публичная оферта</a>
+          <a class="docs__drop-link" href="#doc-privacy" data-doc-link="privacy"><span class="docs__link-bar" aria-hidden="true"></span>Политика конфиденциальности</a>
+          <a class="docs__drop-link" href="#doc-rules" data-doc-link="rules"><span class="docs__link-bar" aria-hidden="true"></span>Правила сервиса</a>
+          <a class="docs__drop-link" href="#doc-consent" data-doc-link="consent"><span class="docs__link-bar" aria-hidden="true"></span>Согласие на обработку ПД</a>
+            </nav>
+          </details>
           <nav class="docs__nav" aria-label="Документы">
             <p class="docs__nav-title">Документы</p>
           <a class="docs__link is-active" href="#doc-offer" data-doc-link="offer"><span class="docs__link-bar" aria-hidden="true"></span>Публичная оферта</a>
@@ -264,7 +276,14 @@
         function activate(id, push) {
           if (ids.indexOf(id) === -1) return;
           links.forEach(function (a) {
-            a.classList.toggle("is-active", a.getAttribute("data-doc-link") === id);
+            var on = a.getAttribute("data-doc-link") === id;
+            a.classList.toggle("is-active", on);
+            if (on) {
+              var label = document.querySelector("[data-drop-label]");
+              if (label) label.textContent = a.textContent;
+              var drop = a.closest("details");
+              if (drop) drop.removeAttribute("open");
+            }
           });
           if (push !== false) {
             try { history.replaceState(null, "", "#doc-" + id); } catch (e) {}
