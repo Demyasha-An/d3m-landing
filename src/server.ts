@@ -1,6 +1,8 @@
+import fs from "fs";
 import path from "path";
 import express from "express";
 import dotenv from "dotenv";
+import { marked } from "marked";
 
 dotenv.config();
 
@@ -195,9 +197,75 @@ app.get("/api/nodes-status", async (_req, res) => {
 
 app.use(express.static(path.join(__dirname, "..", "public")));
 
+// Legal docs: markdown files mounted from LEGAL_DOCS_DIR, rendered into the
+// docs.html shell. Keeps personal data out of the repo — the repo ships only
+// the template, real texts live on the server and are never committed.
+interface LegalDoc {
+  id: string;
+  nav: string;
+  file: string;
+}
+
+const LEGAL_DOCS: LegalDoc[] = [
+  { id: "offer", nav: "Публичная оферта", file: "offer.md" },
+  { id: "privacy", nav: "Политика конфиденциальности", file: "privacy.md" },
+  { id: "rules", nav: "Правила сервиса", file: "rules.md" },
+  { id: "consent", nav: "Согласие на обработку ПД", file: "consent.md" },
+];
+
+function legalDir(): string {
+  return process.env.LEGAL_DOCS_DIR ?? path.join(__dirname, "..", "legal");
+}
+
+function renderLegalDoc(doc: LegalDoc): string {
+  let md: string;
+  try {
+    md = fs.readFileSync(path.join(legalDir(), doc.file), "utf8");
+  } catch {
+    return (
+      `<h1>${doc.nav}</h1>\n` + `<p><em>Документ скоро появится.</em></p>\n`
+    );
+  }
+  return marked.parse(md, { async: false }) as string;
+}
+
+const DOCS_CACHE_TTL_MS = 60_000;
+let docsCache: { at: number; html: string } | null = null;
+
+function renderDocsPage(): string {
+  if (docsCache && Date.now() - docsCache.at < DOCS_CACHE_TTL_MS) {
+    return docsCache.html;
+  }
+  const shell = fs.readFileSync(
+    path.join(__dirname, "..", "public", "docs.html"),
+    "utf8",
+  );
+  const sideNav = LEGAL_DOCS.map(
+    (d, i) =>
+      `<a class="docs__link${i === 0 ? " is-active" : ""}" href="#doc-${d.id}" data-doc-link="${d.id}"><span class="docs__link-bar" aria-hidden="true"></span>${d.nav}</a>`,
+  ).join("\n");
+  const dropNav = LEGAL_DOCS.map(
+    (d, i) =>
+      `<a class="docs__drop-link${i === 0 ? " is-active" : ""}" href="#doc-${d.id}" data-doc-link="${d.id}">${d.nav}</a>`,
+  ).join("\n");
+  const sections = LEGAL_DOCS.map(
+    (d) =>
+      `<section class="legal__doc doc-section" id="doc-${d.id}" data-doc="${d.id}">\n${renderLegalDoc(d)}        </section>`,
+  ).join("\n");
+  const html = shell
+    .split("<!--NAV_SIDE-->")
+    .join(sideNav)
+    .split("<!--NAV_DROP-->")
+    .join(dropNav)
+    .split("<!--SECTIONS-->")
+    .join(sections);
+  docsCache = { at: Date.now(), html };
+  return html;
+}
+
 // Clean URL for the all-in-one legal page.
 app.get("/docs", (_req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "docs.html"));
+  res.type("html").send(renderDocsPage());
 });
 
 // Legacy per-document pages → matching section on /docs.

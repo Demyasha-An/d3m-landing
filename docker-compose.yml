@@ -6,6 +6,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    volumes:
+      # Legal texts (personal data!) live ONLY here, never in git.
+      - ./legal:/app/legal:ro
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     healthcheck:

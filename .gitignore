@@ -2,3 +2,5 @@ node_modules/
 dist/
 .env
 *.log
+# Legal texts with personal data — server-only, never committed.
+legal/

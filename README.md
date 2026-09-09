@@ -75,6 +75,23 @@ cd /opt/d3m-landing && docker compose pull && docker compose up -d
 | `PROMO_WORD_CODE` / `PROMO_WORD_TEXT` | − | — | Пасхалка №1 (напечатать `promo`). Пустой код выключает |
 | `PROMO_LOGO_CODE` / `PROMO_LOGO_TEXT` | − | — | Пасхалка №2 (тройной клик по лого) |
 | `LEGAL_DOCS_URL` | − | встроенная `/docs` | Документы (оферта + политика + правила + согласие). URL перекрывает встроенную страницу |
+| `LEGAL_DOCS_DIR` | − | `./legal` (`/app/legal` в контейнере) | Каталог с текстами: `offer.md`, `privacy.md`, `rules.md`, `consent.md`. Монтируется volume'ом, **в гит не коммитится**. Нет файла → заглушка «Документ скоро появится» |
+
+## Тексты документов (`legal/`)
+
+Персональные данные (ФИО, ИНН, email) живут **только** в markdown-файлах
+на сервере — в репозитории их нет, поэтому репо можно открывать.
+
+```bash
+# на сервере один раз: положить 4 файла рядом с docker-compose.yml
+/opt/d3m-landing/legal/offer.md
+/opt/d3m-landing/legal/privacy.md
+/opt/d3m-landing/legal/rules.md
+/opt/d3m-landing/legal/consent.md
+```
+
+Бэкенд рендерит их в шаблон `/docs` при запросе (кэш 60с). Футер ведет
+на `/docs`, прямые ссылки на разделы: `/docs#doc-offer` и т.д.
 
 > ⚠️ Промокоды отдаются в браузер через `/config.js` — это механика показа,
 > а не секрет. Считай их публичными.
