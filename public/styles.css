@@ -530,7 +530,7 @@ body::after {
     top: 78px;
     z-index: 5;
     order: -1;
-    margin: 0 -20px;
+    margin: 0 calc(-1 * clamp(20px, 4vw, 72px));
   }
   .docs__nav {
     flex-direction: row;
