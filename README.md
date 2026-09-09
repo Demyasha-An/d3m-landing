@@ -74,6 +74,10 @@ cd /opt/d3m-landing && docker compose pull && docker compose up -d
 | `REMNAWAVE_API_TOKEN` | − | — | Панель → Settings → API Tokens → Create, минимальные скоупы **`nodes:list` + `hosts:list`** (только чтение). **Только сервер**, в браузер не попадает |
 | `PROMO_WORD_CODE` / `PROMO_WORD_TEXT` | − | — | Пасхалка №1 (напечатать `promo`). Пустой код выключает |
 | `PROMO_LOGO_CODE` / `PROMO_LOGO_TEXT` | − | — | Пасхалка №2 (тройной клик по лого) |
+| `LEGAL_OFFER_URL` | − | — | Оферта. Пусто → ссылка скрыта из футера |
+| `LEGAL_PRIVACY_URL` | − | — | Политика конфиденциальности |
+| `LEGAL_RULES_URL` | − | — | Правила сервиса |
+| `LEGAL_CONSENT_URL` | − | — | Согласие на обработку ПД |
 
 > ⚠️ Промокоды отдаются в браузер через `/config.js` — это механика показа,
 > а не секрет. Считай их публичными.

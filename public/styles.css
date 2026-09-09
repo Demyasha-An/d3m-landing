@@ -366,6 +366,21 @@ body::after {
   color: var(--muted-2);
   font-size: 0.85rem;
 }
+.site-footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 18px;
+}
+.site-footer__legal a {
+  color: var(--muted-2);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+.site-footer__legal a:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
 
 /* ── Responsive ──────────────────────────── */
 @media (min-width: 560px) {

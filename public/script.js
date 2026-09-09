@@ -9,6 +9,7 @@
   };
   cfg.promoWord = cfg.promoWord || { code: "", text: "" };
   cfg.promoLogo = cfg.promoLogo || { code: "", text: "" };
+  cfg.legal = cfg.legal || {};
 
   /* ── i18n ─────────────────────────────── */
   var i18n = {
@@ -39,6 +40,10 @@
       "feat.trial.text":
         "Протестируйте сервис до оплаты и убедитесь в качестве соединения.",
       "footer.rights": "Все права защищены.",
+      "footer.offer": "Оферта",
+      "footer.privacy": "Политика конфиденциальности",
+      "footer.rules": "Правила сервиса",
+      "footer.consent": "Согласие на обработку ПД",
       priceFormat: "{value}{currency}/мес",
       "promo.title": "Секретный промокод найден!",
       "promo.copy": "Скопировать",
@@ -72,6 +77,10 @@
       "feat.trial.text":
         "Test the service before you pay and see the quality for yourself.",
       "footer.rights": "All rights reserved.",
+      "footer.offer": "Terms of Service",
+      "footer.privacy": "Privacy Policy",
+      "footer.rules": "Service Rules",
+      "footer.consent": "Data Processing Consent",
       priceFormat: "{value}{currency}/mo",
       "promo.title": "Secret promo code unlocked!",
       "promo.copy": "Copy",
@@ -126,6 +135,8 @@
     try {
       localStorage.setItem("d3mvpn-lang", lang);
     } catch (e) {}
+
+    renderLegal();
   }
 
   /* ── Wire links from .env config ──────── */
@@ -148,6 +159,30 @@
     saved = localStorage.getItem("d3mvpn-lang") || "ru";
   } catch (e) {}
   applyLang(saved);
+
+  /* ── Legal links from .env config ─── */
+  function renderLegal() {
+    var lang = document.documentElement.lang || "ru";
+    var dict = i18n[lang] || i18n.ru;
+    var items = [
+      ["footer.offer", cfg.legal.offerUrl],
+      ["footer.privacy", cfg.legal.privacyUrl],
+      ["footer.rules", cfg.legal.rulesUrl],
+      ["footer.consent", cfg.legal.consentUrl],
+    ];
+    document.querySelectorAll("[data-legal]").forEach(function (nav) {
+      nav.textContent = "";
+      items.forEach(function (item) {
+        if (!item[1]) return; // empty URL in .env → link hidden
+        var a = document.createElement("a");
+        a.href = item[1];
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = dict[item[0]] || item[0];
+        nav.appendChild(a);
+      });
+    });
+  }
 
   /* ── Year ─────────────────────────────── */
   document.querySelectorAll("[data-year]").forEach(function (el) {

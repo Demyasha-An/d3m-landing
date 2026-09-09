@@ -9,6 +9,13 @@ interface PromoEgg {
   text: string;
 }
 
+interface LegalLinks {
+  offerUrl: string;
+  privacyUrl: string;
+  rulesUrl: string;
+  consentUrl: string;
+}
+
 interface RuntimeConfig {
   host: string;
   port: number;
@@ -21,6 +28,7 @@ interface RuntimeConfig {
   remnawaveApiToken: string | null;
   promoWord: PromoEgg;
   promoLogo: PromoEgg;
+  legal: LegalLinks;
 }
 
 interface PublicNode {
@@ -64,6 +72,12 @@ const config: RuntimeConfig = {
     code: process.env.PROMO_LOGO_CODE ?? "",
     text: process.env.PROMO_LOGO_TEXT ?? "",
   },
+  legal: {
+    offerUrl: (process.env.LEGAL_OFFER_URL ?? "").trim(),
+    privacyUrl: (process.env.LEGAL_PRIVACY_URL ?? "").trim(),
+    rulesUrl: (process.env.LEGAL_RULES_URL ?? "").trim(),
+    consentUrl: (process.env.LEGAL_CONSENT_URL ?? "").trim(),
+  },
 };
 
 const app = express();
@@ -76,6 +90,7 @@ app.get("/config.js", (_req, res) => {
     currency: config.currency,
     promoWord: config.promoWord,
     promoLogo: config.promoLogo,
+    legal: config.legal,
   };
   res.type("application/javascript");
   res.send(`window.__D3MVPN_CONFIG__ = ${JSON.stringify(publicConfig)};`);
